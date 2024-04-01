@@ -90,11 +90,7 @@ function create() {
     //Створення землі на всю ширину
     for (var x = 0; x < worldWidth; x = x + 384) {
 
-        platforms
-            .create(x, 1080 - 100, 'ground')
-            .setOrigin(0, 0)
-            .setDepth(100)
-            .refreshBody();
+       
 
 
 
