@@ -78,7 +78,7 @@ function create() {
     platforms = this.physics.add.staticGroup();
     //Створюємо землю на всю ширину екрану
     for (var x = 0; x < worldWidth; x = x + 340) {
-        console.log(x)
+        //console.log(x)
         platforms.create(x, 1080 - 83, 'ground')
             .setOrigin(0, 0)
             .refreshBody();
@@ -125,7 +125,123 @@ function create() {
             platforms.create(x + 128 * i, y, '15')
         }
 
-        platforms.create(x + 128 * i, y, '16')
+
+
+
+
+
+
+        objects = this.physics.add.staticGroup();
+
+
+        for (var x = 0; x <= worldWidth; x = x + Phaser.Math.Between(300, 500)) {
+            objects
+                .create(x, 1080 - 93, 'cactus')
+                .setScale(Phaser.Math.FloatBetween(0.5, 2,))
+                .setDepth(Phaser.Math.Between(0, 2))
+                .setOrigin(0, 1)
+                .refreshBody();
+            objects
+                .create(x, 1080 - 93, 'stone')
+                .setScale(Phaser.Math.FloatBetween(0.5, 2,))
+                .setDepth(Phaser.Math.Between(0, 2))
+                .setOrigin(0, 1)
+                .refreshBody();
+            objects
+                .create(x, 1080 - 93, 'bush')
+                .setScale(Phaser.Math.FloatBetween(0.5, 2,))
+                .setDepth(Phaser.Math.Between(0, 2))
+                .setOrigin(0, 1)
+                .refreshBody();
+
+        }
+
+        //додаємо гравця
+        player = this.physics.add.sprite(100, 450, 'dude');
+        player.setBounce(0.2);
+        player.setCollideWorldBounds(true);
+        player.setDepth(5)
+
+        //Налаштування камери
+        this.cameras.main.setBounds(0, 0, worldWidth, 1080);
+        this.physics.world.setBounds(0, 0, worldWidth, 1080);
+        //Додали слідкування камери за спрайтом
+        this.cameras.main.startFollow(player);
+
+
+        //Додаємо об'єкти випадковим чином на всю ширину екрана
+        //     var x = 0;
+        //     while (x < worldWidth) {
+        for (var x = 0; x < worldWidth; x = x + 384) {
+            //         //var y = Phaser.Math.FloatBetween(540, 1080); // Змінили діапазон висоти платформ
+            platforms.create(x, 1080 - 93, 'ground') // Зменшели масштаб платформ
+            //         x+=128
+            //        // x += Phaser.Math.FloatBetween(200, 700); // Збільшели відстань між платформами
+        }
+
+
+
+
+
+
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [{ key: 'dude', frame: 4 }],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        //додали курсор 
+        cursors = this.input.keyboard.createCursorKeys();
+
+
+
+        //додали зірки
+        stars = this.physics.add.group({
+            key: 'star',
+            repeat: 111,
+            setXY: { x: 12, y: 0, stepX: 90 }
+        });
+        stars.children.iterate(function (child) {
+
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+        });
+        hearts = this.physics.add.group({
+            key: 'heart',
+            repeat: 111,
+            setXY: { x: 12, y: 0, stepX: 150 }
+        });
+
+        hearts.children.iterate(function (child) {
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        });
+        bombs = this.physics.add.group();
+        // key: 'star',
+        //repeat: 111,
+        //setXY: { x: 12, y: 0, stepX: 90 }
+        //});
+
+        //додали зіткнення зірок з платформою
+        this.physics.add.collider(player, platforms);
+        this.physics.add.collider(stars, platforms);
+        this.physics.add.collider(bombs, platforms);
+        this.physics.add.overlap(player, stars, collectStar, null, this);
+        this.physics.add.collider(player, bombs, hitBomb, null, this);
+        this.physics.add.collider(player, hearts, collectHeart, null, this);
     }
 
 
